@@ -1,0 +1,638 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+/**
+ *
+ * @author AsemJr
+ */
+package aikk;
+import controllers.Koneksi;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import models.T_AIKK;
+import aikk.DataAIKK;
+
+public  class AIKKmain extends javax.swing.JFrame {
+    //private static PdfReader reader;
+
+    /**
+     * Creates new form AIKKUI
+     */
+    private Connection koneksi;
+    private Statement script;
+    private T_AIKK ModelDataKontak;
+    public AIKKmain() {
+        initComponents();
+         ModelDataKontak = new T_AIKK();
+         TblKontak.setModel(ModelDataKontak);
+             KoneksiDb();
+             tampil();
+             clear();
+    }
+    
+    private void tabel( ){
+TblKontak.getSelectionModel( ).addListSelectionListener(new ListSelectionListener( ) {
+
+@Override
+public void valueChanged(ListSelectionEvent e) {
+int baris = TblKontak.getSelectedRow( );
+
+if(baris != -1){
+DataAIKK kontak = ModelDataKontak.get(baris);
+Nama.setText(kontak.getNama());
+NIM.setText(kontak.getNIM());
+Kelas.setText(kontak.getKelas());
+Angkatan.setText(kontak.getAngkatan());
+Tujuan.setText(kontak.getTujuan( ));
+Alasan.setText(kontak.getAlasan());
+
+}
+}
+});
+simpan.setEnabled(false);
+
+hapus.setEnabled(true);
+}
+    private void KoneksiDb( ){ try{
+            Class.forName("com.mysql.jdbc.Driver");
+            koneksi = DriverManager.getConnection("jdbc:mysql://localhost:3306/dbku", "root", "");
+            script = koneksi.createStatement( );
+}
+        catch(SQLException ex){
+            System.err.print(ex);
+}
+        catch(ClassNotFoundException ex){
+            System.err.print(ex);
+}
+}
+    private void tampil(){
+        try{
+             int baris = TblKontak.getRowCount();
+                for(int i=0; i<baris; i++){
+                ModelDataKontak.delete(0, baris);
+        }
+
+String sql = "select * from t_aikk";
+ResultSet rs = script.executeQuery(sql);
+
+while (rs.next()){
+DataAIKK kontak = new DataAIKK( );
+kontak.setNama(rs.getString(1));
+kontak.setNIM(rs.getString(2));
+kontak.setKelas(rs.getString(5));
+kontak.setTujuan(rs.getString(3));
+kontak.setAlasan(rs.getString(6));
+kontak.setAngkatan(rs.getString(4));
+kontak.setDosenWali(rs.getString(7));
+kontak.setPetugasAsrama(rs.getString(8));
+
+    ModelDataKontak.add(kontak);
+}
+}
+        catch(SQLException ex){
+            System.err.print(ex);
+}
+}
+
+    
+public void clear() {
+        Nama.setText(null);
+        Alasan.setText(null);
+        NIM.setText(null);
+        Tujuan.setText(null);
+        
+    }
+
+private void simpan(){
+    
+    try{
+        String sql = "insert into t_aikk values ("
+            +"'"+Nama.getText()+"',"
+            +"'"+NIM.getText()+"',"
+            +"'"+Tujuan.getText()+"',"
+            +"'"+Angkatan.getText()+"',"
+            +"'"+Kelas.getText()+"',"
+            +"'"+Alasan.getText()+"',"
+            +"'"+dosenWali.getSelectedItem().toString()+"',"
+            +"'"+Asrama.getSelectedItem().toString()+"',"
+            +"'"+Tujuan.getText()+"',"
+            +"'Keperluan'"    
+            +")";
+
+script.executeUpdate(sql);
+
+tampil();
+JOptionPane.showMessageDialog(null, Nama.getText()+" berhasil Disimpan");
+clear();
+}
+catch(SQLException ex){
+JOptionPane.showMessageDialog(this, "Salah bro");
+clear();
+}
+
+}
+private void ubah( ){
+int app;
+
+    if((app = JOptionPane.showConfirmDialog(null, "Ubah kontak"
+        +" ?","Perhatian",JOptionPane.YES_NO_OPTION))==0){
+        try{
+            String sql = "update t_aikk set"
+                +" nama = '"+Nama.getText()+"',"
+                +" e_mail = '"+NIM.getText()+"' where"
+                +" telepon = '"+Tujuan.getText()+"'";
+
+script.executeUpdate(sql);
+
+tampil();
+JOptionPane.showMessageDialog(null, "Kontak berhasil dirubah");
+clear();
+}
+        catch(SQLException ex){
+            System.err.print(ex);
+}
+}
+}
+private void hapus(){
+    int app, bantu;
+
+        if((app = JOptionPane.showConfirmDialog(null, "Hapus data"
+            +" ?","Perhatian",JOptionPane.YES_NO_OPTION))==0){
+        try{
+        String sql = "delete from t_aikk where"
+            +" nama = '"+Nama.getText()+"'";
+
+            bantu = script.executeUpdate(sql);
+
+            tampil( );
+            JOptionPane.showMessageDialog(null, "Kontak berhasil dihapus");
+            clear( );
+}
+catch(SQLException ex){
+System.err.print(ex);
+}
+}
+}
+
+
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jFrame1 = new javax.swing.JFrame();
+        jFrame2 = new javax.swing.JFrame();
+        jFrame3 = new javax.swing.JFrame();
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
+        buttonGroup3 = new javax.swing.ButtonGroup();
+        buttonGroup4 = new javax.swing.ButtonGroup();
+        jPanel2 = new javax.swing.JPanel();
+        jLayeredPane1 = new javax.swing.JLayeredPane();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        Nama = new javax.swing.JTextField();
+        NIM = new javax.swing.JTextField();
+        Alasan = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        dosenWali = new javax.swing.JComboBox();
+        jLabel7 = new javax.swing.JLabel();
+        Asrama = new javax.swing.JComboBox();
+        jLabel8 = new javax.swing.JLabel();
+        Tujuan = new javax.swing.JTextField();
+        Kelas = new javax.swing.JTextField();
+        Angkatan = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        TblKontak = new javax.swing.JTable();
+        simpan = new javax.swing.JButton();
+        hapus = new javax.swing.JButton();
+        exit = new javax.swing.JButton();
+
+        javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
+        jFrame1.getContentPane().setLayout(jFrame1Layout);
+        jFrame1Layout.setHorizontalGroup(
+            jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        jFrame1Layout.setVerticalGroup(
+            jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jFrame2Layout = new javax.swing.GroupLayout(jFrame2.getContentPane());
+        jFrame2.getContentPane().setLayout(jFrame2Layout);
+        jFrame2Layout.setHorizontalGroup(
+            jFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        jFrame2Layout.setVerticalGroup(
+            jFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jFrame3Layout = new javax.swing.GroupLayout(jFrame3.getContentPane());
+        jFrame3.getContentPane().setLayout(jFrame3Layout);
+        jFrame3Layout.setHorizontalGroup(
+            jFrame3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        jFrame3Layout.setVerticalGroup(
+            jFrame3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Aplikasi Izin Keluar Kampus");
+        setBackground(new java.awt.Color(204, 204, 255));
+
+        jLayeredPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Identitas"));
+
+        jLabel1.setText("Nama       :");
+
+        jLabel2.setText("NIM          :");
+
+        jLabel3.setText("Prodi        :");
+
+        jLabel4.setText("Angkatan :");
+
+        jLabel6.setText("Alasan     :");
+
+        Nama.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NamaActionPerformed(evt);
+            }
+        });
+
+        NIM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NIMActionPerformed(evt);
+            }
+        });
+
+        Alasan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AlasanActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("Dosen Wali         :");
+
+        dosenWali.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Sony Adhi Susanto", "Tennov Simanjuntak", "Ari Satya Dharma", "Lit Malem Ginting" }));
+        dosenWali.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dosenWaliActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setText("Petugas Asrama :");
+
+        Asrama.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Sufrando Simanjuntak", "Nelson Situmeang", "Rini Hutajulu", "Ria Simanjuntak", " " }));
+        Asrama.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AsramaActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setText("Tujuan      :");
+
+        Tujuan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TujuanActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jLayeredPane1Layout = new javax.swing.GroupLayout(jLayeredPane1);
+        jLayeredPane1.setLayout(jLayeredPane1Layout);
+        jLayeredPane1Layout.setHorizontalGroup(
+            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jLayeredPane1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jLayeredPane1Layout.createSequentialGroup()
+                        .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1))
+                        .addGap(49, 49, 49)
+                        .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jLayeredPane1Layout.createSequentialGroup()
+                                .addComponent(NIM, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(110, 110, 110)
+                                .addComponent(jLabel7))
+                            .addGroup(jLayeredPane1Layout.createSequentialGroup()
+                                .addComponent(Nama)
+                                .addGap(111, 111, 111)
+                                .addComponent(jLabel5)))
+                        .addGap(18, 18, 18)
+                        .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(dosenWali, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Asrama, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jLayeredPane1Layout.createSequentialGroup()
+                        .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel8))
+                        .addGap(47, 47, 47)
+                        .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(Angkatan, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
+                                .addComponent(Kelas, javax.swing.GroupLayout.Alignment.LEADING))
+                            .addComponent(Alasan, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Tujuan, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
+        );
+        jLayeredPane1Layout.setVerticalGroup(
+            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jLayeredPane1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(Nama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
+                    .addComponent(dosenWali, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(NIM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7)
+                    .addComponent(Asrama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(17, 17, 17)
+                .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(Kelas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(Angkatan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(Tujuan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Alasan, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addContainerGap())
+        );
+        jLayeredPane1.setLayer(jLabel1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(jLabel2, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(jLabel3, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(jLabel4, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(jLabel6, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(Nama, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(NIM, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(Alasan, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(jLabel5, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(dosenWali, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(jLabel7, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(Asrama, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(jLabel8, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(Tujuan, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(Kelas, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jLayeredPane1.setLayer(Angkatan, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jButton1.setText("jButton1");
+
+        TblKontak.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        TblKontak.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                TblKontakMousePressed(evt);
+            }
+        });
+        jScrollPane3.setViewportView(TblKontak);
+
+        simpan.setText("Simpan");
+        simpan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                simpanActionPerformed(evt);
+            }
+        });
+
+        hapus.setText("hapus");
+        hapus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hapusActionPerformed(evt);
+            }
+        });
+
+        exit.setText("Exit");
+        exit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(347, 347, 347)
+                        .addComponent(jButton1))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(362, 362, 362)
+                        .addComponent(simpan)
+                        .addGap(52, 52, 52)
+                        .addComponent(hapus)
+                        .addGap(86, 86, 86)
+                        .addComponent(exit))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(308, 308, 308)
+                        .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 1190, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(271, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(13, 13, 13)
+                .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(simpan)
+                    .addComponent(hapus)
+                    .addComponent(exit))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 81, Short.MAX_VALUE)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(546, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(44, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void NamaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NamaActionPerformed
+          
+    }//GEN-LAST:event_NamaActionPerformed
+
+    private void NIMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NIMActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_NIMActionPerformed
+
+    private void AlasanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AlasanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_AlasanActionPerformed
+
+    private void dosenWaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dosenWaliActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dosenWaliActionPerformed
+
+    private void TujuanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TujuanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TujuanActionPerformed
+
+    private void TblKontakMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblKontakMousePressed
+    tabel();        // TODO add your handling code here:
+    }//GEN-LAST:event_TblKontakMousePressed
+
+    private void AsramaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AsramaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_AsramaActionPerformed
+
+    private void exitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_exitActionPerformed
+
+    private void hapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hapusActionPerformed
+        // TODO add your handling code here:
+        hapus();
+
+    }//GEN-LAST:event_hapusActionPerformed
+
+    private void simpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simpanActionPerformed
+        simpan();
+        //JOptionPane.showMessageDialog(null, "Izin Keluar telah masuk Log !");
+
+    }//GEN-LAST:event_simpanActionPerformed
+
+    /**
+     * @param args the command line arguments
+     * @throws java.io.FileNotFoundException
+     */
+    public static void main(String args[])  {
+        /* Set the Nimbus look and feel */
+        AIKKmain TestIK = new AIKKmain();
+        TestIK.setTitle("Aplikasi Izin Keluar Kampus");
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(AIKKmain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(AIKKmain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(AIKKmain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(AIKKmain.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        
+        
+        /* Create and display the form */
+        
+        
+        
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new AIKKmain().setVisible(true);
+                new AIKKmain().setTitle("Test");
+                
+                
+
+		
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField Alasan;
+    private javax.swing.JTextField Angkatan;
+    private javax.swing.JComboBox Asrama;
+    private javax.swing.JTextField Kelas;
+    private javax.swing.JTextField NIM;
+    private javax.swing.JTextField Nama;
+    private javax.swing.JTable TblKontak;
+    private javax.swing.JTextField Tujuan;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.ButtonGroup buttonGroup3;
+    private javax.swing.ButtonGroup buttonGroup4;
+    private javax.swing.JComboBox dosenWali;
+    private javax.swing.JButton exit;
+    private javax.swing.JButton hapus;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JFrame jFrame1;
+    private javax.swing.JFrame jFrame2;
+    private javax.swing.JFrame jFrame3;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLayeredPane jLayeredPane1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JButton simpan;
+    // End of variables declaration//GEN-END:variables
+}
